@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 export type ComponentCategory =
   | 'substrate'
   | 'driftwood'
@@ -8,32 +6,32 @@ export type ComponentCategory =
   | 'decoration'
   | 'equipment';
 
+export interface Position2D {
+  x: number;
+  y: number;
+}
+
 export interface SceneObject {
   id: string;
   type: ComponentCategory;
   name: string;
-  modelPath?: string;
-  position: THREE.Vector3;
-  rotation: THREE.Euler;
-  scale: THREE.Vector3;
+  imagePath?: string;
+  position: Position2D; // x, y coordinates in pixels or percentage
+  scale: number; // Single scale value for 2D
+  rotation: number; // Rotation in degrees
   metadata?: Record<string, any>;
 }
 
 export interface SubstrateConfig {
   type: 'sand' | 'gravel' | 'soil';
   color: string;
-  height: number; // in cm
-  slope: {
-    front: number;
-    back: number;
-  };
+  height: number; // Height as percentage of tank height
 }
 
 export interface LightingConfig {
   intensity: number; // 0-1
   colorTemperature: number; // Kelvin 2700-10000
   color: string; // hex
-  position: THREE.Vector3;
   timeOfDay: number; // 0-24 hours
 }
 
@@ -42,32 +40,3 @@ export interface WaterConfig {
   tint: string; // hex color
   level: number; // percentage 0-100
 }
-
-export interface CameraPreset {
-  name: string;
-  position: THREE.Vector3;
-  target: THREE.Vector3;
-}
-
-export const CAMERA_PRESETS: CameraPreset[] = [
-  {
-    name: 'Front',
-    position: new THREE.Vector3(0, 0, 100),
-    target: new THREE.Vector3(0, 0, 0),
-  },
-  {
-    name: 'Side',
-    position: new THREE.Vector3(100, 0, 0),
-    target: new THREE.Vector3(0, 0, 0),
-  },
-  {
-    name: 'Top',
-    position: new THREE.Vector3(0, 100, 0),
-    target: new THREE.Vector3(0, 0, 0),
-  },
-  {
-    name: '3/4 View',
-    position: new THREE.Vector3(70, 50, 70),
-    target: new THREE.Vector3(0, 0, 0),
-  },
-];

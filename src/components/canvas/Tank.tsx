@@ -39,6 +39,17 @@ const Tank: React.FC = () => {
     });
   }, []);
 
+  // Create cyan/teal rim material for top edges (matching reference)
+  const rimMaterial = useMemo(() => {
+    return new THREE.MeshStandardMaterial({
+      color: '#5eead4',
+      metalness: 0.1,
+      roughness: 0.3,
+      transparent: true,
+      opacity: 0.9,
+    });
+  }, []);
+
   const glassThickness = config.style.glassThickness / 100; // Convert mm to scene units
 
   return (
@@ -66,6 +77,24 @@ const Tank: React.FC = () => {
       {/* Bottom Panel */}
       <mesh position={[0, -scaleHeight / 2, 0]} material={glassMaterial} receiveShadow>
         <boxGeometry args={[scaleWidth, glassThickness, scaleDepth]} />
+      </mesh>
+
+      {/* Cyan/teal rim at top edges (always visible like reference) */}
+      {/* Front rim */}
+      <mesh position={[0, scaleHeight / 2, scaleDepth / 2]} material={rimMaterial}>
+        <boxGeometry args={[scaleWidth + glassThickness * 2, glassThickness * 1.5, glassThickness * 1.5]} />
+      </mesh>
+      {/* Back rim */}
+      <mesh position={[0, scaleHeight / 2, -scaleDepth / 2]} material={rimMaterial}>
+        <boxGeometry args={[scaleWidth + glassThickness * 2, glassThickness * 1.5, glassThickness * 1.5]} />
+      </mesh>
+      {/* Left rim */}
+      <mesh position={[-scaleWidth / 2, scaleHeight / 2, 0]} material={rimMaterial}>
+        <boxGeometry args={[glassThickness * 1.5, glassThickness * 1.5, scaleDepth]} />
+      </mesh>
+      {/* Right rim */}
+      <mesh position={[scaleWidth / 2, scaleHeight / 2, 0]} material={rimMaterial}>
+        <boxGeometry args={[glassThickness * 1.5, glassThickness * 1.5, scaleDepth]} />
       </mesh>
 
       {/* Frame edges (if not rimless) */}

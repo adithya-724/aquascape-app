@@ -32,7 +32,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           )}
         </div>
 
-        {/* Center - 3D Canvas */}
+        {/* Center - Tank View */}
         <div className="flex-1 relative overflow-hidden">
           {children}
         </div>

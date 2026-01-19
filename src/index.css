@@ -1,48 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
+  /* Aquatic theme - light ocean blues and teals */
+  --background: 210 25% 98%;
+  --foreground: 215 25% 15%;
+  --card: 210 30% 97%;
+  --card-foreground: 215 25% 15%;
+  --popover: 210 30% 99%;
+  --popover-foreground: 215 25% 15%;
+  --primary: 195 85% 45%; /* Ocean blue */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 180 25% 90%;
+  --secondary-foreground: 195 85% 25%;
+  --muted: 190 20% 92%;
+  --muted-foreground: 195 15% 45%;
+  --accent: 175 60% 50%; /* Aqua accent */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 75% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 195 20% 88%;
+  --input: 195 20% 88%;
+  --ring: 195 85% 45%;
   --radius: 0.5rem;
+
+  /* Custom aquatic colors */
+  --aqua-light: 180 70% 85%;
+  --aqua-medium: 185 60% 60%;
+  --aqua-dark: 195 80% 35%;
+  --sand: 40 45% 80%;
+  --coral: 15 85% 65%;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
+  /* Dark ocean theme */
+  --background: 215 30% 8%;
+  --foreground: 210 30% 95%;
+  --card: 215 28% 12%;
+  --card-foreground: 210 30% 95%;
+  --popover: 215 30% 10%;
+  --popover-foreground: 210 30% 95%;
+  --primary: 195 85% 55%;
+  --primary-foreground: 215 30% 8%;
+  --secondary: 195 25% 20%;
+  --secondary-foreground: 195 85% 85%;
+  --muted: 195 20% 18%;
+  --muted-foreground: 195 20% 65%;
+  --accent: 175 60% 45%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 70% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 195 25% 22%;
+  --input: 195 25% 22%;
+  --ring: 195 85% 55%;
 }
 
 * {
@@ -54,11 +63,75 @@ body {
   color: hsl(var(--foreground));
   margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: hsl(var(--card) / 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* Animated gradient background */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-aqua {
+  background: linear-gradient(135deg,
+    hsl(var(--aqua-light)) 0%,
+    hsl(var(--primary)) 50%,
+    hsl(var(--aqua-dark)) 100%);
+  background-size: 200% 200%;
+  animation: gradient 8s ease infinite;
 }

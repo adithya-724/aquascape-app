@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import * as THREE from 'three';
 import type { SceneObject, SubstrateConfig, LightingConfig, WaterConfig } from '../types/scene';
 
 interface SceneStore {
@@ -31,19 +30,14 @@ interface SceneStore {
 
 const DEFAULT_SUBSTRATE: SubstrateConfig = {
   type: 'soil',
-  color: '#3d2817',
-  height: 5,
-  slope: {
-    front: 3,
-    back: 8,
-  },
+  color: '#1a1a1a', // Dark black/charcoal to match reference
+  height: 20, // 20% of tank height
 };
 
 const DEFAULT_LIGHTING: LightingConfig = {
   intensity: 0.8,
   colorTemperature: 6500,
   color: '#ffffff',
-  position: new THREE.Vector3(0, 50, 0),
   timeOfDay: 12,
 };
 

@@ -2,8 +2,9 @@ import React from 'react';
 import { useUIStore } from '../../store/uiStore';
 import { useSceneStore } from '../../store/sceneStore';
 import { useTankStore } from '../../store/tankStore';
-import { Layers, Mountain, Trees, Package, Settings } from 'lucide-react';
+import { Layers, Mountain, Trees, Package, Settings, Trash2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import ComponentLibrary from '../panels/ComponentLibrary';
 
 interface SidebarProps {
   side: 'left' | 'right';
@@ -45,65 +46,113 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
         </div>
 
         {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <h3 className="text-sm font-semibold mb-3">{tabs.find(t => t.id === activeTab)?.label}</h3>
-          <div className="text-sm text-muted-foreground">
-            Component library coming soon...
-          </div>
+        <div className="flex-1 overflow-y-auto">
+          {(activeTab === 'hardscape' || activeTab === 'plants' || activeTab === 'decor') && (
+            <ComponentLibrary />
+          )}
+          {activeTab === 'substrate' && (
+            <div className="p-4">
+              <h3 className="text-sm font-semibold mb-3">Substrate</h3>
+              <div className="text-sm text-muted-foreground">
+                Substrate customization coming soon...
+              </div>
+            </div>
+          )}
+          {activeTab === 'equipment' && (
+            <div className="p-4">
+              <h3 className="text-sm font-semibold mb-3">Equipment</h3>
+              <div className="text-sm text-muted-foreground">
+                Equipment library coming soon...
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
   // Right sidebar - Properties Panel
+  const { removeObject, getSelectedObject, selectObject } = useSceneStore();
+  const selectedObject = getSelectedObject();
+
+  const handleDeleteObject = () => {
+    if (selectedObjectId) {
+      removeObject(selectedObjectId);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col p-4 overflow-y-auto">
       <h3 className="text-sm font-semibold mb-4">Properties</h3>
 
       {/* Tank Settings */}
-      <div className="mb-6">
-        <h4 className="text-xs font-medium text-muted-foreground mb-2">Tank Settings</h4>
+      <div className="mb-6 p-3 bg-accent/10 rounded-lg border border-border">
+        <h4 className="text-xs font-medium text-muted-foreground mb-3">Tank Settings</h4>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Width:</span>
-            <span>{config.dimensions.width} cm</span>
+            <span className="font-medium">{config.dimensions.width} cm</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Height:</span>
-            <span>{config.dimensions.height} cm</span>
+            <span className="font-medium">{config.dimensions.height} cm</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Depth:</span>
-            <span>{config.dimensions.depth} cm</span>
+            <span className="font-medium">{config.dimensions.depth} cm</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between pt-2 border-t border-border/50">
             <span className="text-muted-foreground">Volume:</span>
-            <span>{config.volumeLiters.toFixed(1)} L ({config.volumeGallons.toFixed(1)} gal)</span>
+            <span className="font-medium">{config.volumeLiters.toFixed(1)} L ({config.volumeGallons.toFixed(1)} gal)</span>
           </div>
         </div>
       </div>
 
       {/* Selected Object */}
-      {selectedObjectId ? (
-        <div className="mb-6">
-          <h4 className="text-xs font-medium text-muted-foreground mb-2">Selected Object</h4>
-          <div className="text-sm">
-            <p>Object properties will appear here...</p>
+      {selectedObject ? (
+        <div className="mb-6 p-3 bg-primary/10 rounded-lg border-2 border-primary/30">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-xs font-medium text-primary">Selected Object</h4>
+            <button
+              onClick={handleDeleteObject}
+              className="p-1.5 hover:bg-destructive/20 text-destructive rounded transition-colors"
+              title="Delete object"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Type:</span>
+              <span className="font-medium capitalize">{selectedObject.type}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Name:</span>
+              <span className="font-medium">{selectedObject.name}</span>
+            </div>
+            <div className="pt-2 border-t border-primary/20">
+              <p className="text-xs text-muted-foreground">
+                Position: ({selectedObject.position.x.toFixed(1)}%, {selectedObject.position.y.toFixed(1)}%)
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Rotation: {selectedObject.rotation.toFixed(0)}° | Scale: {selectedObject.scale.toFixed(2)}x
+              </p>
+            </div>
           </div>
         </div>
       ) : (
-        <div className="text-sm text-muted-foreground">
-          Select an object to view properties
+        <div className="mb-6 p-4 text-center text-sm text-muted-foreground bg-muted/20 rounded-lg border border-dashed border-border">
+          Click an object in the tank to select it
         </div>
       )}
 
       {/* Scene Info */}
       <div className="mt-auto pt-4 border-t border-border">
-        <h4 className="text-xs font-medium text-muted-foreground mb-2">Scene Info</h4>
-        <div className="space-y-1 text-sm">
+        <h4 className="text-xs font-medium text-muted-foreground mb-3">Scene Info</h4>
+        <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Objects:</span>
-            <span>{objects.length}</span>
+            <span className="text-muted-foreground">Total Objects:</span>
+            <span className="font-medium text-primary">{objects.length}</span>
           </div>
         </div>
       </div>

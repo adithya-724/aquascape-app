@@ -37,8 +37,8 @@ const Toolbar: React.FC = () => {
       onClick={onClick}
       title={title}
       className={cn(
-        'p-2 rounded hover:bg-accent transition-colors',
-        active && 'bg-accent text-accent-foreground'
+        'p-2 rounded-lg hover:bg-accent hover:shadow-sm transition-all duration-200',
+        active && 'bg-primary text-primary-foreground shadow-md'
       )}
     >
       {icon}
@@ -46,7 +46,7 @@ const Toolbar: React.FC = () => {
   );
 
   return (
-    <div className="h-14 bg-card border-b border-border px-4 flex items-center justify-between">
+    <div className="h-14 bg-card/90 backdrop-blur-md border-b border-border/50 px-4 flex items-center justify-between shadow-sm">
       {/* Left Section - Sidebar Toggles */}
       <div className="flex items-center gap-2">
         <ToolButton
@@ -55,8 +55,10 @@ const Toolbar: React.FC = () => {
           active={leftSidebarOpen}
           title="Toggle Component Library"
         />
-        <div className="w-px h-6 bg-border mx-2" />
-        <h1 className="text-lg font-semibold text-foreground">Aquascape Designer</h1>
+        <div className="w-px h-6 bg-border/60 mx-2" />
+        <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          Aquascape Designer
+        </h1>
       </div>
 
       {/* Center Section - View Controls */}

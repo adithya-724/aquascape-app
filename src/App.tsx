@@ -1,11 +1,11 @@
 import React from 'react';
 import MainLayout from './components/layout/MainLayout';
-import Scene from './components/canvas/Scene';
+import TankCanvas from './components/canvas/TankCanvas';
 
 function App() {
   return (
     <MainLayout>
-      <Scene />
+      <TankCanvas />
     </MainLayout>
   );
 }

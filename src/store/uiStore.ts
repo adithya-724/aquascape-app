@@ -19,7 +19,7 @@ interface UIStore {
 export const useUIStore = create<UIStore>((set) => ({
   leftSidebarOpen: true,
   rightSidebarOpen: true,
-  activeTab: 'substrate',
+  activeTab: 'hardscape',
   showGrid: true,
   showRuler: false,
   showRuleOfThirds: false,
