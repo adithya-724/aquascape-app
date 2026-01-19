@@ -2,9 +2,10 @@ import React from 'react';
 import { useUIStore } from '../../store/uiStore';
 import { useSceneStore } from '../../store/sceneStore';
 import { useTankStore } from '../../store/tankStore';
-import { Layers, Mountain, Trees, Package, Settings, Trash2 } from 'lucide-react';
+import { Layers, Mountain, Trees, Package, Settings, Trash2, ImagePlus } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import ComponentLibrary from '../panels/ComponentLibrary';
+import CustomComponentsPanel from '../panels/CustomComponentsPanel';
 
 interface SidebarProps {
   side: 'left' | 'right';
@@ -22,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
       { id: 'plants' as const, label: 'Plants', icon: <Trees size={18} /> },
       { id: 'decor' as const, label: 'Decor', icon: <Package size={18} /> },
       { id: 'equipment' as const, label: 'Equipment', icon: <Settings size={18} /> },
+      { id: 'custom' as const, label: 'Custom', icon: <ImagePlus size={18} /> },
     ];
 
     return (
@@ -66,13 +68,16 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
               </div>
             </div>
           )}
+          {activeTab === 'custom' && (
+            <CustomComponentsPanel />
+          )}
         </div>
       </div>
     );
   }
 
   // Right sidebar - Properties Panel
-  const { removeObject, getSelectedObject, selectObject } = useSceneStore();
+  const { removeObject, getSelectedObject } = useSceneStore();
   const selectedObject = getSelectedObject();
 
   const handleDeleteObject = () => {

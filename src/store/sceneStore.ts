@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { SceneObject, SubstrateConfig, LightingConfig, WaterConfig } from '../types/scene';
+import type { SceneObject, SubstrateConfig, LightingConfig, WaterConfig, CustomAsset } from '../types/scene';
 
 interface SceneStore {
   objects: SceneObject[];
@@ -7,6 +7,7 @@ interface SceneStore {
   substrate: SubstrateConfig;
   lighting: LightingConfig;
   water: WaterConfig;
+  customAssets: CustomAsset[];
 
   // Object management
   addObject: (object: Omit<SceneObject, 'id'>) => void;
@@ -14,6 +15,11 @@ interface SceneStore {
   updateObject: (id: string, updates: Partial<SceneObject>) => void;
   selectObject: (id: string | null) => void;
   getSelectedObject: () => SceneObject | null;
+
+  // Custom assets management
+  addCustomAsset: (asset: Omit<CustomAsset, 'id' | 'createdAt'>) => void;
+  removeCustomAsset: (id: string) => void;
+  getCustomAsset: (id: string) => CustomAsset | undefined;
 
   // Substrate
   setSubstrate: (substrate: Partial<SubstrateConfig>) => void;
@@ -53,6 +59,7 @@ export const useSceneStore = create<SceneStore>((set, get) => ({
   substrate: DEFAULT_SUBSTRATE,
   lighting: DEFAULT_LIGHTING,
   water: DEFAULT_WATER,
+  customAssets: [],
 
   addObject: (object) =>
     set((state) => ({
@@ -88,6 +95,30 @@ export const useSceneStore = create<SceneStore>((set, get) => ({
     return state.objects.find((obj) => obj.id === state.selectedObjectId) || null;
   },
 
+  addCustomAsset: (asset) =>
+    set((state) => ({
+      customAssets: [
+        ...state.customAssets,
+        {
+          ...asset,
+          id: `asset-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          createdAt: Date.now(),
+        },
+      ],
+    })),
+
+  removeCustomAsset: (id) =>
+    set((state) => ({
+      customAssets: state.customAssets.filter((asset) => asset.id !== id),
+      // Also remove any objects that use this custom asset
+      objects: state.objects.filter((obj) => obj.metadata?.customAssetId !== id),
+    })),
+
+  getCustomAsset: (id) => {
+    const state = get();
+    return state.customAssets.find((asset) => asset.id === id);
+  },
+
   setSubstrate: (substrate) =>
     set((state) => ({
       substrate: {
@@ -119,5 +150,6 @@ export const useSceneStore = create<SceneStore>((set, get) => ({
       substrate: DEFAULT_SUBSTRATE,
       lighting: DEFAULT_LIGHTING,
       water: DEFAULT_WATER,
+      customAssets: [],
     })),
 }));

@@ -4,7 +4,18 @@ export type ComponentCategory =
   | 'rock'
   | 'plant'
   | 'decoration'
-  | 'equipment';
+  | 'equipment'
+  | 'custom';
+
+// Custom asset uploaded by user with background removed
+export interface CustomAsset {
+  id: string;
+  name: string;
+  originalImage: string; // Base64 data URL of original image
+  processedImage: string; // Base64 data URL with background removed
+  thumbnail: string; // Smaller thumbnail for the library
+  createdAt: number;
+}
 
 export interface Position2D {
   x: number;

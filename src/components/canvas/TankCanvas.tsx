@@ -1,12 +1,14 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useTankStore } from '../../store/tankStore';
 import { useSceneStore } from '../../store/sceneStore';
+import DraggableItem from './DraggableItem';
 
 const TankCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const tankAreaRef = useRef<HTMLDivElement>(null);
   const { config } = useTankStore();
-  const { substrate, water } = useSceneStore();
+  const { substrate, water, objects, selectObject } = useSceneStore();
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
     // Clear canvas
@@ -31,7 +33,6 @@ const TankCanvas: React.FC = () => {
 
     // Colors
     const glassColor = 'rgba(127, 219, 202, 0.9)'; // Cyan/teal for rim
-    const glassEdgeColor = 'rgba(200, 230, 230, 0.4)';
     const backPanelColor = 'rgba(245, 248, 250, 0.95)';
 
     // ==================== BACK PANEL (creates depth) ====================
@@ -229,6 +230,14 @@ const TankCanvas: React.FC = () => {
   const tankHeight = config.dimensions.height;
   const tankDepth = config.dimensions.depth;
 
+  // Handle click on tank area to deselect objects
+  const handleTankClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target === tankAreaRef.current) {
+      selectObject(null);
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -238,6 +247,24 @@ const TankCanvas: React.FC = () => {
         ref={canvasRef}
         className="absolute inset-0"
       />
+
+      {/* Interactive tank area for draggable objects */}
+      <div
+        ref={tankAreaRef}
+        onClick={handleTankClick}
+        className="absolute"
+        style={{
+          left: '40px',
+          top: '40px',
+          right: '40px',
+          bottom: '40px',
+        }}
+      >
+        {/* Scene objects */}
+        {objects.map((obj) => (
+          <DraggableItem key={obj.id} object={obj} containerRef={tankAreaRef} />
+        ))}
+      </div>
 
       {/* Tank info overlay */}
       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 text-gray-800 text-sm pointer-events-none border border-gray-300 shadow-lg z-10">

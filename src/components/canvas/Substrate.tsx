@@ -20,10 +20,6 @@ const Substrate: React.FC = () => {
   // Get glass thickness to position substrate inside the tank walls
   const glassThickness = config.style.glassThickness / 100;
 
-  // Inner dimensions (inside the glass walls)
-  const innerWidth = scaleWidth - glassThickness * 2;
-  const innerDepth = scaleDepth - glassThickness * 2;
-
   // Create procedural noise texture for grainy sand appearance
   const noiseTexture = useMemo(() => {
     const size = 256;

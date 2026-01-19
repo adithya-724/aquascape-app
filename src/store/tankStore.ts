@@ -30,7 +30,7 @@ const litersToGallons = (liters: number): number => {
   return liters * 0.264172;
 };
 
-export const useTankStore = create<TankStore>((set, get) => ({
+export const useTankStore = create<TankStore>((set) => ({
   config: {
     dimensions: DEFAULT_DIMENSIONS,
     style: DEFAULT_STYLE,

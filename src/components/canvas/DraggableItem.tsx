@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { useSceneStore } from '../../store/sceneStore';
 import type { SceneObject } from '../../types/scene';
-import { Mountain, Trees, Box } from 'lucide-react';
+import { Mountain, Trees, Box, ImageIcon } from 'lucide-react';
 
 interface DraggableItemProps {
   object: SceneObject;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const DraggableItem: React.FC<DraggableItemProps> = ({ object, containerRef }) => {
@@ -13,7 +13,15 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ object, containerRef }) =
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const { selectedObjectId, selectObject, updateObject } = useSceneStore();
+  const { selectedObjectId, selectObject, updateObject, getCustomAsset } = useSceneStore();
+
+  // Get custom asset if this is a custom object
+  const customAsset = useMemo(() => {
+    if (object.type === 'custom' && object.metadata?.customAssetId) {
+      return getCustomAsset(object.metadata.customAssetId);
+    }
+    return undefined;
+  }, [object.type, object.metadata?.customAssetId, getCustomAsset]);
   const isSelected = selectedObjectId === object.id;
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -21,10 +29,8 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ object, containerRef }) =
     selectObject(object.id);
     setIsDragging(true);
 
-    if (itemRef.current && containerRef.current) {
+    if (itemRef.current) {
       const itemRect = itemRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
-
       setDragOffset({
         x: e.clientX - itemRect.left,
         y: e.clientY - itemRect.top,
@@ -75,10 +81,38 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ object, containerRef }) =
         return <Box size={32} className="text-amber-700" />;
       case 'plant':
         return <Trees size={32} className="text-green-600" />;
+      case 'custom':
+        return <ImageIcon size={32} className="text-purple-600" />;
       default:
         return <Box size={32} />;
     }
   };
+
+  // Render custom asset as an image
+  if (object.type === 'custom' && customAsset) {
+    return (
+      <div
+        ref={itemRef}
+        onMouseDown={handleMouseDown}
+        className={`absolute cursor-move transition-all ${
+          isDragging ? 'scale-110 opacity-80' : ''
+        } ${isSelected ? 'ring-2 ring-primary ring-offset-1' : ''}`}
+        style={{
+          left: `${object.position.x}%`,
+          top: `${object.position.y}%`,
+          transform: `rotate(${object.rotation}deg) scale(${object.scale})`,
+          zIndex: isSelected ? 1000 : 1,
+        }}
+      >
+        <img
+          src={customAsset.processedImage}
+          alt={object.name}
+          className="max-w-[120px] max-h-[120px] object-contain pointer-events-none"
+          draggable={false}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

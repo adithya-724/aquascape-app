@@ -3,7 +3,7 @@ import { create } from 'zustand';
 interface UIStore {
   leftSidebarOpen: boolean;
   rightSidebarOpen: boolean;
-  activeTab: 'substrate' | 'hardscape' | 'plants' | 'decor' | 'equipment';
+  activeTab: 'substrate' | 'hardscape' | 'plants' | 'decor' | 'equipment' | 'custom';
   showGrid: boolean;
   showRuler: boolean;
   showRuleOfThirds: boolean;

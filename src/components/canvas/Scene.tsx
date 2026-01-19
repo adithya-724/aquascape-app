@@ -1,6 +1,7 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Grid } from '@react-three/drei';
+import * as THREE from 'three';
 import { useUIStore } from '../../store/uiStore';
 import { useSceneStore } from '../../store/sceneStore';
 import Tank from './Tank';
@@ -66,9 +67,9 @@ const Scene: React.FC = () => {
           <SceneObject
             key={obj.id}
             id={obj.id}
-            position={obj.position}
-            rotation={obj.rotation}
-            scale={obj.scale}
+            position={new THREE.Vector3(obj.position.x / 10, 0, obj.position.y / 10)}
+            rotation={new THREE.Euler(0, (obj.rotation * Math.PI) / 180, 0)}
+            scale={new THREE.Vector3(obj.scale, obj.scale, obj.scale)}
             type={obj.type as 'rock' | 'driftwood' | 'plant'}
           />
         ))}
