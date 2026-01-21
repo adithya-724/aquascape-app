@@ -30,6 +30,7 @@ export interface SceneObject {
   position: Position2D; // x, y coordinates in pixels or percentage
   scale: number; // Single scale value for 2D
   rotation: number; // Rotation in degrees
+  zIndex: number; // Layer order (higher = in front)
   metadata?: Record<string, any>;
 }
 
@@ -50,4 +51,11 @@ export interface WaterConfig {
   clarity: number; // 0-1, 0 = crystal clear, 1 = murky
   tint: string; // hex color
   level: number; // percentage 0-100
+}
+
+// Tank background presets
+export type BackgroundPreset = 'none' | 'black' | 'stone-3d';
+
+export interface BackgroundConfig {
+  preset: BackgroundPreset;
 }

@@ -2,10 +2,12 @@ import React from 'react';
 import { useUIStore } from '../../store/uiStore';
 import { useSceneStore } from '../../store/sceneStore';
 import { useTankStore } from '../../store/tankStore';
-import { Layers, Mountain, Trees, Package, Settings, Trash2, ImagePlus } from 'lucide-react';
+import { Layers, Mountain, Trees, Package, Settings, Trash2, ImagePlus, Wallpaper, RotateCw, Maximize2, RotateCcw, ArrowUpToLine, ArrowDownToLine, ArrowUp, ArrowDown } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import ComponentLibrary from '../panels/ComponentLibrary';
 import CustomComponentsPanel from '../panels/CustomComponentsPanel';
+import BackgroundPanel from '../panels/BackgroundPanel';
+import SubstratePanel from '../panels/SubstratePanel';
 
 interface SidebarProps {
   side: 'left' | 'right';
@@ -24,6 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
       { id: 'decor' as const, label: 'Decor', icon: <Package size={18} /> },
       { id: 'equipment' as const, label: 'Equipment', icon: <Settings size={18} /> },
       { id: 'custom' as const, label: 'Custom', icon: <ImagePlus size={18} /> },
+      { id: 'background' as const, label: 'Background', icon: <Wallpaper size={18} /> },
     ];
 
     return (
@@ -53,12 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
             <ComponentLibrary />
           )}
           {activeTab === 'substrate' && (
-            <div className="p-4">
-              <h3 className="text-sm font-semibold mb-3">Substrate</h3>
-              <div className="text-sm text-muted-foreground">
-                Substrate customization coming soon...
-              </div>
-            </div>
+            <SubstratePanel />
           )}
           {activeTab === 'equipment' && (
             <div className="p-4">
@@ -71,18 +69,43 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
           {activeTab === 'custom' && (
             <CustomComponentsPanel />
           )}
+          {activeTab === 'background' && (
+            <BackgroundPanel />
+          )}
         </div>
       </div>
     );
   }
 
   // Right sidebar - Properties Panel
-  const { removeObject, getSelectedObject } = useSceneStore();
+  const { removeObject, getSelectedObject, updateObject, bringToFront, sendToBack, bringForward, sendBackward } = useSceneStore();
   const selectedObject = getSelectedObject();
 
   const handleDeleteObject = () => {
     if (selectedObjectId) {
       removeObject(selectedObjectId);
+    }
+  };
+
+  const handleRotationChange = (rotation: number) => {
+    if (selectedObjectId) {
+      // Normalize rotation to 0-360
+      const normalizedRotation = ((rotation % 360) + 360) % 360;
+      updateObject(selectedObjectId, { rotation: normalizedRotation });
+    }
+  };
+
+  const handleScaleChange = (scale: number) => {
+    if (selectedObjectId) {
+      // Clamp scale between 0.1 and 5
+      const clampedScale = Math.max(0.1, Math.min(5, scale));
+      updateObject(selectedObjectId, { scale: clampedScale });
+    }
+  };
+
+  const rotateBy = (degrees: number) => {
+    if (selectedObject) {
+      handleRotationChange(selectedObject.rotation + degrees);
     }
   };
 
@@ -126,7 +149,7 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
               <Trash2 size={14} />
             </button>
           </div>
-          <div className="space-y-2 text-sm">
+          <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Type:</span>
               <span className="font-medium capitalize">{selectedObject.type}</span>
@@ -135,12 +158,137 @@ const Sidebar: React.FC<SidebarProps> = ({ side }) => {
               <span className="text-muted-foreground">Name:</span>
               <span className="font-medium">{selectedObject.name}</span>
             </div>
-            <div className="pt-2 border-t border-primary/20">
+
+            {/* Rotation Control */}
+            <div className="pt-3 border-t border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <RotateCw size={14} className="text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">Rotation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => rotateBy(-15)}
+                  className="p-1.5 hover:bg-accent rounded transition-colors"
+                  title="Rotate -15°"
+                >
+                  <RotateCcw size={14} />
+                </button>
+                <input
+                  type="range"
+                  min="0"
+                  max="360"
+                  value={selectedObject.rotation}
+                  onChange={(e) => handleRotationChange(Number(e.target.value))}
+                  className="flex-1 h-2 bg-accent rounded-lg appearance-none cursor-pointer"
+                />
+                <button
+                  onClick={() => rotateBy(15)}
+                  className="p-1.5 hover:bg-accent rounded transition-colors"
+                  title="Rotate +15°"
+                >
+                  <RotateCw size={14} />
+                </button>
+                <span className="text-xs font-mono w-10 text-right">{selectedObject.rotation.toFixed(0)}°</span>
+              </div>
+            </div>
+
+            {/* Scale Control */}
+            <div className="pt-3 border-t border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Maximize2 size={14} className="text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">Scale</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleScaleChange(selectedObject.scale - 0.1)}
+                  className="p-1.5 hover:bg-accent rounded transition-colors text-sm font-bold"
+                  title="Decrease scale"
+                >
+                  −
+                </button>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="3"
+                  step="0.05"
+                  value={selectedObject.scale}
+                  onChange={(e) => handleScaleChange(Number(e.target.value))}
+                  className="flex-1 h-2 bg-accent rounded-lg appearance-none cursor-pointer"
+                />
+                <button
+                  onClick={() => handleScaleChange(selectedObject.scale + 0.1)}
+                  className="p-1.5 hover:bg-accent rounded transition-colors text-sm font-bold"
+                  title="Increase scale"
+                >
+                  +
+                </button>
+                <span className="text-xs font-mono w-10 text-right">{selectedObject.scale.toFixed(2)}x</span>
+              </div>
+              {/* Quick scale presets */}
+              <div className="flex gap-1 mt-2">
+                {[0.5, 1, 1.5, 2].map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={() => handleScaleChange(preset)}
+                    className={cn(
+                      'flex-1 py-1 text-xs rounded transition-colors',
+                      Math.abs(selectedObject.scale - preset) < 0.05
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-accent hover:bg-accent/80'
+                    )}
+                  >
+                    {preset}x
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Layer Order Control */}
+            <div className="pt-3 border-t border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Layers size={14} className="text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">Layer Order</span>
+              </div>
+              <div className="grid grid-cols-4 gap-1">
+                <button
+                  onClick={() => bringToFront(selectedObject.id)}
+                  className="flex flex-col items-center gap-0.5 p-2 hover:bg-accent rounded transition-colors"
+                  title="Bring to Front"
+                >
+                  <ArrowUpToLine size={14} />
+                  <span className="text-[10px]">Front</span>
+                </button>
+                <button
+                  onClick={() => bringForward(selectedObject.id)}
+                  className="flex flex-col items-center gap-0.5 p-2 hover:bg-accent rounded transition-colors"
+                  title="Bring Forward"
+                >
+                  <ArrowUp size={14} />
+                  <span className="text-[10px]">Up</span>
+                </button>
+                <button
+                  onClick={() => sendBackward(selectedObject.id)}
+                  className="flex flex-col items-center gap-0.5 p-2 hover:bg-accent rounded transition-colors"
+                  title="Send Backward"
+                >
+                  <ArrowDown size={14} />
+                  <span className="text-[10px]">Down</span>
+                </button>
+                <button
+                  onClick={() => sendToBack(selectedObject.id)}
+                  className="flex flex-col items-center gap-0.5 p-2 hover:bg-accent rounded transition-colors"
+                  title="Send to Back"
+                >
+                  <ArrowDownToLine size={14} />
+                  <span className="text-[10px]">Back</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Position Info */}
+            <div className="pt-3 border-t border-primary/20">
               <p className="text-xs text-muted-foreground">
                 Position: ({selectedObject.position.x.toFixed(1)}%, {selectedObject.position.y.toFixed(1)}%)
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Rotation: {selectedObject.rotation.toFixed(0)}° | Scale: {selectedObject.scale.toFixed(2)}x
               </p>
             </div>
           </div>
